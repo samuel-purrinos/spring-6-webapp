@@ -1,25 +1,28 @@
 package guru.springframework.spring6webapp.bootstrap;
 
-import guru.springframework.spring6webapp.domain.*;
-import guru.springframework.spring6webapp.repositories.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import guru.springframework.spring6webapp.domain.Author;
+import guru.springframework.spring6webapp.domain.Book;
+import guru.springframework.spring6webapp.domain.Publisher;
+import guru.springframework.spring6webapp.repositories.AuthorRepository;
+import guru.springframework.spring6webapp.repositories.BookRepository;
+import guru.springframework.spring6webapp.repositories.PublisherRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+/**
+ * Created by jt, Spring Framework Guru.
+ */
 @Component
 public class BootstrapData implements CommandLineRunner {
 
-    Logger logger = LoggerFactory.getLogger(BootstrapData.class);
-
-
-    private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
+    private final BookRepository bookRepository;
     private final PublisherRepository publisherRepository;
 
-    public BootstrapData(BookRepository bookRepository, AuthorRepository authorRepository, PublisherRepository publisherRepository) {
-        this.bookRepository = bookRepository;
+    public BootstrapData(AuthorRepository authorRepository, BookRepository bookRepository,
+                         PublisherRepository publisherRepository) {
         this.authorRepository = authorRepository;
+        this.bookRepository = bookRepository;
         this.publisherRepository = publisherRepository;
     }
 
@@ -29,50 +32,59 @@ public class BootstrapData implements CommandLineRunner {
         eric.setFirstName("Eric");
         eric.setLastName("Evans");
 
-        Book dddBook = new Book();
-        dddBook.setTitle("Domain driven design");
-        dddBook.setIsbn("1234567890");
+        Book ddd = new Book();
+        ddd.setTitle("Domain Driven Design");
+        ddd.setIsbn("123456");
 
-        Author savedEric = authorRepository.save(eric);
-        Book savedDddBook = bookRepository.save(dddBook);
+        Author ericSaved = authorRepository.save(eric);
+        Book dddSaved = bookRepository.save(ddd);
 
         Author rod = new Author();
         rod.setFirstName("Rod");
         rod.setLastName("Johnson");
 
         Book noEJB = new Book();
-        noEJB.setTitle("J2EE development without EJB");
-        noEJB.setIsbn("1234567890");
+        noEJB.setTitle("J2EE Development without EJB");
+        noEJB.setIsbn("54757585");
 
-        Author savedRod = authorRepository.save(rod);
-        Book savedNoEjb = bookRepository.save(noEJB);
+        Author rodSaved = authorRepository.save(rod);
+        Book noEJBSaved = bookRepository.save(noEJB);
 
-        Publisher ericPublisher = new Publisher();
-        ericPublisher.setPublisherName("PACKT");
-        ericPublisher.setCity("New York");
-        ericPublisher.setState("New York");
-        ericPublisher.setAddress("40 5th avenue");
-        ericPublisher.setZip("12345");
+        ericSaved.getBooks().add(dddSaved);
+        rodSaved.getBooks().add(noEJBSaved);
+        dddSaved.getAuthors().add(ericSaved);
+        noEJBSaved.getAuthors().add(rodSaved);
 
-        publisherRepository.save(ericPublisher);
 
-        savedDddBook.setPublisher(ericPublisher);
-        savedNoEjb.setPublisher(ericPublisher);
+        Publisher publisher = new Publisher();
+        publisher.setPublisherName("My Publisher");
+        publisher.setAddress("123 Main");
+        Publisher savedPublisher = publisherRepository.save(publisher);
 
-        savedEric.getBooks().add(savedDddBook);
-        savedRod.getBooks().add(savedNoEjb);
-        savedDddBook.getAuthors().add(savedEric);
-        savedNoEjb.getAuthors().add(savedRod);
+        dddSaved.setPublisher(savedPublisher);
+        noEJBSaved.setPublisher(savedPublisher);
 
-        authorRepository.save(savedEric);
-        authorRepository.save(savedRod);
+        authorRepository.save(ericSaved);
+        authorRepository.save(rodSaved);
+        bookRepository.save(dddSaved);
+        bookRepository.save(noEJBSaved);
 
-        bookRepository.save(savedDddBook);
-        bookRepository.save(savedNoEjb);
+        System.out.println("In Bootstrap");
+        System.out.println("Author Count: " + authorRepository.count());
+        System.out.println("Book Count: " + bookRepository.count());
 
-        logger.info("In bootstrap");
-        logger.info("Author count: {}",authorRepository.count());
-        logger.info("Book count: {}",bookRepository.count());
-        logger.info("Publisher count: {}",publisherRepository.count());
+
+
+        System.out.println("Publisher Count: " + publisherRepository.count());
     }
 }
+
+
+
+
+
+
+
+
+
+
