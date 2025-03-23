@@ -29,20 +29,20 @@ public class BootstrapData implements CommandLineRunner {
         eric.setFirstName("Eric");
         eric.setLastName("Evans");
 
-        Book ericBook = new Book();
-        ericBook.setTitle("Domain driven design");
-        ericBook.setIsbn("1234567890");
+        Book dddBook = new Book();
+        dddBook.setTitle("Domain driven design");
+        dddBook.setIsbn("1234567890");
 
         Author savedEric = authorRepository.save(eric);
-        Book savedEricBook = bookRepository.save(ericBook);
+        Book savedDddBook = bookRepository.save(dddBook);
 
         Author rod = new Author();
-        eric.setFirstName("Rod");
-        eric.setLastName("Johnson");
+        rod.setFirstName("Rod");
+        rod.setLastName("Johnson");
 
         Book noEJB = new Book();
-        ericBook.setTitle("J2EE development without EJB");
-        ericBook.setIsbn("1234567890");
+        noEJB.setTitle("J2EE development without EJB");
+        noEJB.setIsbn("1234567890");
 
         Author savedRod = authorRepository.save(rod);
         Book savedNoEjb = bookRepository.save(noEJB);
@@ -50,21 +50,24 @@ public class BootstrapData implements CommandLineRunner {
         Publisher ericPublisher = new Publisher();
         ericPublisher.setPublisherName("PACKT");
         ericPublisher.setCity("New York");
+        ericPublisher.setState("New York");
         ericPublisher.setAddress("40 5th avenue");
         ericPublisher.setZip("12345");
 
         publisherRepository.save(ericPublisher);
 
-        savedEricBook.setPublisher(ericPublisher);
+        savedDddBook.setPublisher(ericPublisher);
         savedNoEjb.setPublisher(ericPublisher);
 
-        savedEric.getBooks().add(savedEricBook);
+        savedEric.getBooks().add(savedDddBook);
         savedRod.getBooks().add(savedNoEjb);
+        savedDddBook.getAuthors().add(savedEric);
+        savedNoEjb.getAuthors().add(savedRod);
 
         authorRepository.save(savedEric);
         authorRepository.save(savedRod);
 
-        bookRepository.save(savedEricBook);
+        bookRepository.save(savedDddBook);
         bookRepository.save(savedNoEjb);
 
         logger.info("In bootstrap");
